@@ -133,11 +133,12 @@
             flex: 1;
             text-align: center;
             position: relative;
+            min-width: 40px; /* کاهش عرض هر مرحله */
         }
         .step:not(:last-child)::after {
             content: '';
             position: absolute;
-            top: 20px;
+            top: 15px; /* تنظیم موقعیت خط اتصال */
             left: 50%;
             width: 100%;
             height: 2px;
@@ -148,17 +149,18 @@
             background-color: #28a745;
         }
         .step-icon {
-            width: 40px;
-            height: 40px;
+            width: 30px; /* کاهش اندازه آیکون */
+            height: 30px;
             border-radius: 50%;
             background-color: #6c757d;
             display: flex;
             align-items: center;
             justify-content: center;
             color: #fff;
-            margin: 0 auto 10px;
+            margin: 0 auto 5px; /* کاهش فاصله */
             z-index: 2;
             position: relative;
+            font-size: 12px; /* کاهش اندازه فونت */
         }
         .step.completed .step-icon {
             background-color: #28a745;
@@ -170,7 +172,7 @@
             background-color: #6c757d;
         }
         .step-label {
-            font-size: 14px;
+            font-size: 12px; /* کاهش اندازه فونت */
             color: #adb5bd;
         }
         .step.completed .step-label {
@@ -193,17 +195,21 @@
                 font-size: 12px;
             }
             .step-bar {
-                flex-direction: column;
-                align-items: flex-start;
+                flex-wrap: nowrap; /* جلوگیری از شکستن خطوط */
             }
             .step {
-                margin-bottom: 20px;
+                min-width: 30px; /* کاهش بیشتر عرض در موبایل */
             }
             .step:not(:last-child)::after {
-                top: 100%;
-                left: 20px;
-                width: 2px;
-                height: 20px;
+                top: 12px; /* تنظیم موقعیت خط اتصال در موبایل */
+            }
+            .step-icon {
+                width: 25px; /* کاهش اندازه آیکون در موبایل */
+                height: 25px;
+                font-size: 10px; /* کاهش اندازه فونت در موبایل */
+            }
+            .step-label {
+                font-size: 10px; /* کاهش اندازه فونت در موبایل */
             }
         }
     </style>
