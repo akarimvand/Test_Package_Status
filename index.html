@@ -117,14 +117,15 @@
             background-color: #f8f9fa;
             color: #1e1e1e;
         }
+        /* رنگ هدرهای کارت‌ها */
         .card-header.test-package-info {
-            background-color: #4a90e2;
+            background-color: #005f73; /* آبی تیره صنعتی */
         }
         .card-header.remain-works {
-            background-color: #50e3c2;
+            background-color: #2a9d8f; /* سبز صنعتی */
         }
         .card-header.ndt-status {
-            background-color: #ff6b6b;
+            background-color: #e76f51; /* قرمز صنعتی */
         }
         .step-bar {
             display: flex;
@@ -138,8 +139,7 @@
             position: relative;
             min-width: 40px; /* کاهش عرض هر مرحله */
             opacity: 0;
-            transform: translateX(-100%);
-            animation: slideIn 0.5s ease-out forwards;
+            animation: fadeIn 0.5s ease-out forwards;
         }
         .step:nth-child(1) { animation-delay: 0.1s; }
         .step:nth-child(2) { animation-delay: 0.2s; }
@@ -180,8 +180,8 @@
         .step.completed .step-icon {
             background-color: #28a745;
         }
-        .step.in-progress .step-icon {
-            background-color: #ffc107;
+        .step.last-completed .step-icon {
+            background-color: #FFA500; /* نارنجی برای آخرین مرحله تکمیل شده */
         }
         .step.future .step-icon {
             background-color: #6c757d;
@@ -193,8 +193,8 @@
         .step.completed .step-label {
             color: #28a745;
         }
-        .step.in-progress .step-label {
-            color: #ffc107;
+        .step.last-completed .step-label {
+            color: #FFA500; /* نارنجی برای آخرین مرحله تکمیل شده */
         }
         @media (max-width: 576px) {
             .card-body {
@@ -245,15 +245,22 @@
         }
 
         /* انیمیشن Step Bar */
-        @keyframes slideIn {
+        @keyframes fadeIn {
             from {
-                transform: translateX(-100%);
                 opacity: 0;
             }
             to {
-                transform: translateX(0);
                 opacity: 1;
             }
+        }
+
+        /* چشمک زدن فیلدهای REPAIR و Cutout */
+        .blink {
+            animation: blink 1s infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
         }
     </style>
 </head>
@@ -363,12 +370,18 @@
                         { label: 'FD', status: fields[28].trim() === '✓' ? 'completed' : 'future' }
                     ];
 
+                    // پیدا کردن آخرین مرحله تکمیل شده
+                    let lastCompletedIndex = steps.map(step => step.status).lastIndexOf('completed');
+                    if (lastCompletedIndex >= 0) {
+                        steps[lastCompletedIndex].status = 'last-completed';
+                    }
+
                     var stepBarHtml = `
                         <div class="step-bar">
                             ${steps.map((step, index) => `
                                 <div class="step ${step.status}">
                                     <div class="step-icon">
-                                        ${step.status === 'completed' ? '<i class="fas fa-check"></i>' : index + 1}
+                                        ${step.status === 'completed' || step.status === 'last-completed' ? '<i class="fas fa-check"></i>' : index + 1}
                                     </div>
                                     <div class="step-label">${step.label}</div>
                                 </div>
@@ -442,8 +455,8 @@
                                 <div class="row">
                                     <div class="col-6">
                                         ${createField('RT_REMAIN(Joint)', fields[30], true)}
-                                        ${createField('REPAIR', fields[31], true)}
-                                        ${createField('Cutout', fields[32], true)}
+                                        ${createField('REPAIR', fields[31], true, parseFloat(fields[31]) > 0)}
+                                        ${createField('Cutout', fields[32], true, parseFloat(fields[32]) > 0)}
                                         ${createField('RTRP', fields[33], true)}
                                     </div>
                                     <div class="col-6">
@@ -461,8 +474,11 @@
                 animateStepBar(); // فعال‌سازی انیمیشن Step Bar
             }
 
-            function createField(name, value, isRemain = false) {
+            function createField(name, value, isRemain = false, shouldBlink = false) {
                 var valueClass = isRemain && parseFloat(value) > 0 ? 'field-value red' : 'field-value';
+                if (shouldBlink) {
+                    valueClass += ' blink';
+                }
                 return `
                     <p>
                         <span class="field-title">${name}:</span>
@@ -475,13 +491,11 @@
                 const steps = document.querySelectorAll('.step');
                 steps.forEach(step => {
                     step.style.opacity = '0';
-                    step.style.transform = 'translateX(-100%)';
                 });
 
                 setTimeout(() => {
                     steps.forEach(step => {
                         step.style.opacity = '1';
-                        step.style.transform = 'translateX(0)';
                     });
                 }, 100);
             }
