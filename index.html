@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TP Status</title>
+    <title>TP Status Viewer</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/font-face.css" rel="stylesheet">
@@ -18,6 +18,9 @@
             background-color: #1e1e1e;
             color: #f8f9fa;
             transition: background-color 0.3s, color 0.3s;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh; /* حداقل ارتفاع صفحه برابر با ارتفاع viewport */
         }
         body.light-mode {
             background-color: #f8f9fa;
@@ -212,6 +215,22 @@
                 font-size: 10px; /* کاهش اندازه فونت در موبایل */
             }
         }
+
+        /* استایل‌های Footer */
+        footer {
+            margin-top: auto; /* قرار دادن فوتر در پایین صفحه */
+            padding: 10px 0;
+            background-color: #2d2d2d;
+            text-align: center;
+            font-size: 14px;
+            color: #adb5bd;
+            border-top: 1px solid #444;
+        }
+        .light-mode footer {
+            background-color: #f8f9fa;
+            color: #6c757d;
+            border-top-color: #ddd;
+        }
     </style>
 </head>
 <body>
@@ -230,6 +249,11 @@
         </div>
         <div id="results"></div>
     </div>
+
+    <!-- Footer -->
+    <footer>
+        Developed by Amin Naseri | Email: akarimvand@gmail.com
+    </footer>
 
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script>
