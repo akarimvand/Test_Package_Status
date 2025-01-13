@@ -6,10 +6,13 @@
     <title>TP Status Viewer</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <!-- لینک فونت Vazir از CDN -->
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/font-face.css" rel="stylesheet">
     <style>
-        /* تنظیم فونت کلی صفحه به Vazir */
+        :root {
+            --field-value-color: #adb5bd; /* رنگ پیش‌فرض برای مقادیر فیلدها */
+            --field-value-red: #dc3545; /* رنگ قرمز برای مقادیر خاص */
+        }
+
         body {
             font-family: Vazir, Tahoma, Geneva, Verdana, sans-serif;
             background-color: #1e1e1e;
@@ -19,6 +22,8 @@
         body.light-mode {
             background-color: #f8f9fa;
             color: #1e1e1e;
+            --field-value-color: #6c757d; /* رنگ مقادیر فیلدها در تم روشن */
+            --field-value-red: #dc3545; /* رنگ قرمز در تم روشن */
         }
         .card {
             background-color: #2d2d2d;
@@ -36,7 +41,7 @@
             border-bottom: 1px solid #444;
             font-weight: bold;
             padding: 12px 15px;
-            font-size: 18px; /* افزایش اندازه فونت هدر */
+            font-size: 18px;
             border-radius: 8px 8px 0 0;
             transition: background-color 0.3s, border-color 0.3s;
         }
@@ -48,36 +53,6 @@
         }
         .card-body p {
             margin-bottom: 8px;
-        }
-        .timeline {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 15px;
-        }
-        .timeline .step {
-            flex: 1;
-            text-align: center;
-            padding: 6px;
-            border-radius: 5px;
-            margin: 0 2px;
-            font-size: 12px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        .timeline .step.completed {
-            background-color: #28a745;
-            color: white;
-        }
-        .timeline .step.pending {
-            background-color: #6c757d;
-            color: white;
-        }
-        .timeline .step.fin {
-            background-color: #007bff;
-            color: white;
-        }
-        .timeline .step.scheduled {
-            background-color: #ff8c42;
-            color: white;
         }
         .search-box {
             margin-bottom: 20px;
@@ -96,32 +71,26 @@
             border-color: #ddd;
         }
         .category-title {
-            font-size: 18px; /* افزایش اندازه فونت عنوان دسته‌ها */
+            font-size: 18px;
             font-weight: bold;
             margin-bottom: 12px;
         }
         .field-title {
             color: #ffffff;
             font-weight: bold;
-            font-size: 14px; /* افزایش اندازه فونت عنوان فیلدها */
+            font-size: 14px;
             transition: color 0.3s;
         }
         .light-mode .field-title {
             color: #1e1e1e;
         }
         .field-value {
-            color: #adb5bd;
-            font-size: 14px; /* افزایش اندازه فونت مقادیر */
+            color: var(--field-value-color); /* استفاده از متغیر CSS */
+            font-size: 14px;
             transition: color 0.3s;
         }
-        .light-mode .field-value {
-            color: #6c757d;
-        }
         .field-value.red {
-            color: #dc3545;
-        }
-        .light-mode .field-value.red {
-            color: #dc3545;
+            color: var(--field-value-red); /* استفاده از متغیر CSS برای رنگ قرمز */
         }
         .theme-toggle-btn {
             position: fixed;
@@ -154,6 +123,62 @@
         .card-header.ndt-status {
             background-color: #ff6b6b;
         }
+        .step-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .step {
+            flex: 1;
+            text-align: center;
+            position: relative;
+        }
+        .step:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            width: 100%;
+            height: 2px;
+            background-color: #6c757d;
+            z-index: 1;
+        }
+        .step.completed::after {
+            background-color: #28a745;
+        }
+        .step-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #6c757d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            margin: 0 auto 10px;
+            z-index: 2;
+            position: relative;
+        }
+        .step.completed .step-icon {
+            background-color: #28a745;
+        }
+        .step.in-progress .step-icon {
+            background-color: #ffc107;
+        }
+        .step.future .step-icon {
+            background-color: #6c757d;
+        }
+        .step-label {
+            font-size: 14px;
+            color: #adb5bd;
+        }
+        .step.completed .step-label {
+            color: #28a745;
+        }
+        .step.in-progress .step-label {
+            color: #ffc107;
+        }
         @media (max-width: 576px) {
             .card-body {
                 padding: 8px;
@@ -162,10 +187,23 @@
                 margin-bottom: 6px;
             }
             .category-title {
-                font-size: 16px; /* افزایش اندازه فونت عنوان دسته‌ها در موبایل */
+                font-size: 16px;
             }
             .field-title, .field-value {
-                font-size: 12px; /* افزایش اندازه فونت عنوان فیلدها و مقادیر در موبایل */
+                font-size: 12px;
+            }
+            .step-bar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .step {
+                margin-bottom: 20px;
+            }
+            .step:not(:last-child)::after {
+                top: 100%;
+                left: 20px;
+                width: 2px;
+                height: 20px;
             }
         }
     </style>
@@ -257,16 +295,40 @@
                         console.error("Invalid line format:", results[0]);
                         return;
                     }
+
+                    // ایجاد Step Bar
+                    var steps = [
+                        { label: 'NDT', status: fields[20].trim() === '✓' ? 'completed' : 'future' },
+                        { label: 'HS', status: fields[21].trim() === '✓' ? 'completed' : 'future' },
+                        { label: 'LC', status: fields[22].trim() === '✓' ? 'completed' : 'future' },
+                        { label: 'CL', status: fields[23].trim() === '✓' ? 'completed' : 'future' },
+                        { label: 'H/V/P', status: fields[24].trim() === '✓' ? 'completed' : 'future' },
+                        { label: 'DD', status: fields[25].trim() === '✓' ? 'completed' : 'future' },
+                        { label: 'FC', status: fields[26].trim() === '✓' ? 'completed' : 'future' },
+                        { label: 'RE', status: fields[27].trim() === '✓' ? 'completed' : 'future' },
+                        { label: 'FD', status: fields[28].trim() === '✓' ? 'completed' : 'future' }
+                    ];
+
+                    var stepBarHtml = `
+                        <div class="step-bar">
+                            ${steps.map((step, index) => `
+                                <div class="step ${step.status}">
+                                    <div class="step-icon">
+                                        ${step.status === 'completed' ? '<i class="fas fa-check"></i>' : index + 1}
+                                    </div>
+                                    <div class="step-label">${step.label}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+
                     html += `
                         <div class="card">
                             <div class="card-header">
                                 TP No: ${fields[3]} | Group: ${fields[0]}
                             </div>
                             <div class="card-body">
-                                <!-- Timeline -->
-                                <div class="timeline">
-                                    ${createTimeline(fields.slice(20, 29))}
-                                </div>
+                                ${stepBarHtml}
                             </div>
                         </div>
 
@@ -352,40 +414,6 @@
                         <span class="${valueClass}">${value}</span>
                     </p>
                 `;
-            }
-
-            function createTimeline(steps) {
-                var timeline = '';
-                var stepNames = ['NDT', 'HS', 'LC', 'CL', 'H/V/P', 'DD', 'FC', 'RE', 'FD'];
-                steps.forEach(function(step, index) {
-                    var status = getStepStatus(step.trim());
-                    timeline += `
-                        <div class="step ${status}" title="${stepNames[index]}: ${step}">
-                            ${stepNames[index]}
-                        </div>
-                    `;
-                });
-                return timeline;
-            }
-
-            function getStepStatus(step) {
-                step = step.trim();
-                if (step === '✓') {
-                    return 'completed';
-                } else if (step === '') {
-                    return 'pending';
-                } else if (step === 'F.I.N') {
-                    return 'fin';
-                } else if (isValidDate(step)) {
-                    return 'scheduled';
-                } else {
-                    return 'pending';
-                }
-            }
-
-            function isValidDate(value) {
-                var datePattern = /^\d{4}\/\d{2}\/\d{2}$/;
-                return datePattern.test(value);
             }
         });
     </script>
