@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TP Status Viewer</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #1e1e1e;
+            color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        body.light-mode {
+            background-color: #f8f9fa;
+            color: #1e1e1e;
+        }
+        .card {
+            background-color: #2d2d2d;
+            border: 1px solid #444;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+        .light-mode .card {
+            background-color: #ffffff;
+            border-color: #ddd;
+        }
+        .card-header {
+            border-bottom: 1px solid #444;
+            font-weight: bold;
+            padding: 12px 15px;
+            font-size: 16px;
+            border-radius: 8px 8px 0 0;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+        .light-mode .card-header {
+            border-color: #ddd;
+        }
+        .card-body {
+            padding: 10px; /* کاهش padding */
+        }
+        .card-body p {
+            margin-bottom: 6px; /* کاهش فاصله بین فیلدها */
+        }
+        .timeline {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        .timeline .step {
+            flex: 1;
+            text-align: center;
+            padding: 6px; /* کاهش padding */
+            border-radius: 5px;
+            margin: 0 2px;
+            font-size: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .timeline .step.completed {
+            background-color: #28a745;
+            color: white;
+        }
+        .timeline .step.pending {
+            background-color: #6c757d;
+            color: white;
+        }
+        .timeline .step.fin {
+            background-color: #007bff;
+            color: white;
+        }
+        .timeline .step.scheduled {
+            background-color: #ff8c42;
+            color: white;
+        }
+        .search-box {
+            margin-bottom: 20px;
+        }
+        .search-box select {
+            background-color: #333;
+            color: #f8f9fa;
+            border: 1px solid #444;
+            border-radius: 5px;
+            padding: 8px;
+            transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+        }
+        .light-mode .search-box select {
+            background-color: #f8f9fa;
+            color: #1e1e1e;
+            border-color: #ddd;
+        }
+        .category-title {
+            font-size: 16px; /* کاهش اندازه فونت */
+            font-weight: bold;
+            margin-bottom: 10px; /* کاهش فاصله */
+        }
+        .field-title {
+            color: #ffffff;
+            font-weight: bold;
+            font-size: 12px; /* کاهش اندازه فونت */
+            transition: color 0.3s;
+        }
+        .light-mode .field-title {
+            color: #1e1e1e;
+        }
+        .field-value {
+            color: #adb5bd;
+            font-size: 12px; /* کاهش اندازه فونت */
+            transition: color 0.3s;
+        }
+        .light-mode .field-value {
+            color: #6c757d;
+        }
+        .field-value.red {
+            color: #dc3545;
+        }
+        .light-mode .field-value.red {
+            color: #dc3545;
+        }
+        .theme-toggle-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #333;
+            border: none;
+            color: #f8f9fa;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s, color 0.3s;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .light-mode .theme-toggle-btn {
+            background-color: #f8f9fa;
+            color: #1e1e1e;
+        }
+        .card-header.test-package-info {
+            background-color: #4a90e2;
+        }
+        .card-header.remain-works {
+            background-color: #50e3c2;
+        }
+        .card-header.ndt-status {
+            background-color: #ff6b6b;
+        }
+        @media (max-width: 576px) {
+            .card-body {
+                padding: 8px; /* کاهش بیشتر padding در موبایل */
+            }
+            .card-body p {
+                margin-bottom: 4px; /* کاهش بیشتر فاصله بین فیلدها در موبایل */
+            }
+            .category-title {
+                font-size: 14px; /* کاهش اندازه فونت در موبایل */
+            }
+            .field-title, .field-value {
+                font-size: 10px; /* کاهش اندازه فونت در موبایل */
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle-btn" id="themeToggle">
+        <i class="fas fa-moon"></i>
+    </button>
+    <div class="container">
+        <h1 class="text-center my-4">TP Status Viewer</h1>
+        <div class="search-box">
+            <select id="priorityFilter" class="form-control mb-2">
+                <option value="">All Priorities</option>
+            </select>
+            <select id="tpNoFilter" class="form-control mb-2">
+                <option value="">Select TP No</option>
+            </select>
+        </div>
+        <div id="results"></div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            var allData = [];
+
+            // دکمه تغییر تم
+            $('#themeToggle').on('click', function() {
+                $('body').toggleClass('light-mode');
+                $(this).find('i').toggleClass('fa-moon fa-sun');
+            });
+
+            // Fetch data and populate priority filter
+            $.get('https://raw.githubusercontent.com/akarimvand/tp_status/refs/heads/main/TPDB.txt', function(data) {
+                allData = data.split('\n');
+                var priorities = new Set();
+                allData.forEach(function(line) {
+                    var fields = line.split(',');
+                    if (fields.length > 5) {
+                        priorities.add(fields[5].trim()); // Major_Priority
+                    }
+                });
+                var priorityFilter = $('#priorityFilter');
+                priorities.forEach(function(priority) {
+                    priorityFilter.append(`<option value="${priority}">${priority}</option>`);
+                });
+            }).fail(function(error) {
+                console.error("Error loading data:", error);
+            });
+
+            // Clear results when priority filter changes
+            $('#priorityFilter').on('change', function() {
+                $('#results').html('');
+                var selectedPriority = $(this).val().trim();
+                var tpNoFilter = $('#tpNoFilter');
+                tpNoFilter.empty().append('<option value="">Select TP No</option>');
+                if (selectedPriority) {
+                    var tpNos = new Set();
+                    allData.forEach(function(line) {
+                        var fields = line.split(',');
+                        if (fields.length > 3 && fields[5].trim() === selectedPriority) {
+                            tpNos.add(fields[3].trim()); // TP_No
+                        }
+                    });
+                    tpNos.forEach(function(tpNo) {
+                        tpNoFilter.append(`<option value="${tpNo}">${tpNo}</option>`);
+                    });
+                }
+            });
+
+            // Filter function based on TP No
+            $('#tpNoFilter').on('change', function() {
+                var selectedTpNo = $(this).val().trim();
+                var results = allData.filter(line => {
+                    var fields = line.split(',');
+                    if (fields.length > 3) {
+                        return selectedTpNo === "" || fields[3].trim() === selectedTpNo;
+                    }
+                    return false;
+                });
+                displayResults(results);
+            });
+
+            function displayResults(results) {
+                var html = '';
+                if (results.length > 0) {
+                    var fields = results[0].split(','); // Only display the first matching record
+                    if (fields.length < 38) {
+                        console.error("Invalid line format:", results[0]);
+                        return;
+                    }
+                    html += `
+                        <div class="card">
+                            <div class="card-header">
+                                TP No: ${fields[3]} | Group: ${fields[0]}
+                            </div>
+                            <div class="card-body">
+                                <!-- Timeline -->
+                                <div class="timeline">
+                                    ${createTimeline(fields.slice(20, 29))}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card: Test Package Information -->
+                        <div class="card">
+                            <div class="card-header category-title test-package-info">
+                                Test Package Information
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-6">
+                                        ${createField('Sub_Contructor', fields[1])}
+                                        ${createField('TP_value', fields[2])}
+                                        ${createField('Step', fields[4])}
+                                        ${createField('Major_Priority', fields[5])}
+                                        ${createField('Sub_system', fields[6])}
+                                    </div>
+                                    <div class="col-6">
+                                        ${createField('Test_media', fields[7])}
+                                        ${createField('Test_pressure', fields[8])}
+                                        ${createField('Inch_meter', fields[9])}
+                                        ${createField('Inch_dia', fields[10])}
+                                        ${createField('Remark', fields[29])}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card: Remain Works -->
+                        <div class="card">
+                            <div class="card-header category-title remain-works">
+                                Remain Works
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-6">
+                                        ${createField('Support_Remain', fields[11], true)}
+                                        ${createField('Weld_Remain', fields[12], true)}
+                                        ${createField('Total_Support', fields[13], true)}
+                                    </div>
+                                    <div class="col-6">
+                                        ${createField('SP_Welded', fields[14], true)}
+                                        ${createField('Total_DIA', fields[15], true)}
+                                        ${createField('WELD_DONE', fields[16], true)}
+                                        ${createField('Welding %', fields[17], true)}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card: NDT Status -->
+                        <div class="card">
+                            <div class="card-header category-title ndt-status">
+                                NDT Status
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-6">
+                                        ${createField('RT_REMAIN(Joint)', fields[30], true)}
+                                        ${createField('REPAIR', fields[31], true)}
+                                        ${createField('Cutout', fields[32], true)}
+                                        ${createField('RTRP', fields[33], true)}
+                                    </div>
+                                    <div class="col-6">
+                                        ${createField('PT_REMAIN(Joint)', fields[34], true)}
+                                        ${createField('PWHT_REMAIN(Joint)', fields[35], true)}
+                                        ${createField('UT_REMAIN(Joint)', fields[36], true)}
+                                        ${createField('PMI_REMAIN(Joint)', fields[37], true)}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+                $('#results').html(html);
+            }
+
+            function createField(name, value, isRemain = false) {
+                var valueClass = isRemain && parseFloat(value) > 0 ? 'field-value red' : 'field-value';
+                return `
+                    <p>
+                        <span class="field-title">${name}:</span>
+                        <span class="${valueClass}">${value}</span>
+                    </p>
+                `;
+            }
+
+            function createTimeline(steps) {
+                var timeline = '';
+                var stepNames = ['NDT', 'HS', 'LC', 'CL', 'H/V/P', 'DD', 'FC', 'RE', 'FD'];
+                steps.forEach(function(step, index) {
+                    var status = getStepStatus(step.trim());
+                    timeline += `
+                        <div class="step ${status}" title="${stepNames[index]}: ${step}">
+                            ${stepNames[index]}
+                        </div>
+                    `;
+                });
+                return timeline;
+            }
+
+            function getStepStatus(step) {
+                step = step.trim();
+                if (step === '✓') {
+                    return 'completed';
+                } else if (step === '') {
+                    return 'pending';
+                } else if (step === 'F.I.N') {
+                    return 'fin';
+                } else if (isValidDate(step)) {
+                    return 'scheduled';
+                } else {
+                    return 'pending';
+                }
+            }
+
+            function isValidDate(value) {
+                var datePattern = /^\d{4}\/\d{2}\/\d{2}$/;
+                return datePattern.test(value);
+            }
+        });
+    </script>
+</body>
+</html>
