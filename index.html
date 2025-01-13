@@ -6,11 +6,14 @@
     <title>TP Status Viewer</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <!-- لینک فونت Vazir از CDN -->
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/font-face.css" rel="stylesheet">
     <style>
+        /* تنظیم فونت کلی صفحه به Vazir */
         body {
+            font-family: Vazir, Tahoma, Geneva, Verdana, sans-serif;
             background-color: #1e1e1e;
             color: #f8f9fa;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             transition: background-color 0.3s, color 0.3s;
         }
         body.light-mode {
@@ -33,7 +36,7 @@
             border-bottom: 1px solid #444;
             font-weight: bold;
             padding: 12px 15px;
-            font-size: 16px;
+            font-size: 18px; /* افزایش اندازه فونت هدر */
             border-radius: 8px 8px 0 0;
             transition: background-color 0.3s, border-color 0.3s;
         }
@@ -41,10 +44,10 @@
             border-color: #ddd;
         }
         .card-body {
-            padding: 10px; /* کاهش padding */
+            padding: 10px;
         }
         .card-body p {
-            margin-bottom: 6px; /* کاهش فاصله بین فیلدها */
+            margin-bottom: 8px;
         }
         .timeline {
             display: flex;
@@ -54,7 +57,7 @@
         .timeline .step {
             flex: 1;
             text-align: center;
-            padding: 6px; /* کاهش padding */
+            padding: 6px;
             border-radius: 5px;
             margin: 0 2px;
             font-size: 12px;
@@ -93,14 +96,14 @@
             border-color: #ddd;
         }
         .category-title {
-            font-size: 16px; /* کاهش اندازه فونت */
+            font-size: 18px; /* افزایش اندازه فونت عنوان دسته‌ها */
             font-weight: bold;
-            margin-bottom: 10px; /* کاهش فاصله */
+            margin-bottom: 12px;
         }
         .field-title {
             color: #ffffff;
             font-weight: bold;
-            font-size: 12px; /* کاهش اندازه فونت */
+            font-size: 14px; /* افزایش اندازه فونت عنوان فیلدها */
             transition: color 0.3s;
         }
         .light-mode .field-title {
@@ -108,7 +111,7 @@
         }
         .field-value {
             color: #adb5bd;
-            font-size: 12px; /* کاهش اندازه فونت */
+            font-size: 14px; /* افزایش اندازه فونت مقادیر */
             transition: color 0.3s;
         }
         .light-mode .field-value {
@@ -153,16 +156,16 @@
         }
         @media (max-width: 576px) {
             .card-body {
-                padding: 8px; /* کاهش بیشتر padding در موبایل */
+                padding: 8px;
             }
             .card-body p {
-                margin-bottom: 4px; /* کاهش بیشتر فاصله بین فیلدها در موبایل */
+                margin-bottom: 6px;
             }
             .category-title {
-                font-size: 14px; /* کاهش اندازه فونت در موبایل */
+                font-size: 16px; /* افزایش اندازه فونت عنوان دسته‌ها در موبایل */
             }
             .field-title, .field-value {
-                font-size: 10px; /* کاهش اندازه فونت در موبایل */
+                font-size: 12px; /* افزایش اندازه فونت عنوان فیلدها و مقادیر در موبایل */
             }
         }
     </style>
