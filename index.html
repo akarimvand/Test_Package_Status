@@ -12,7 +12,7 @@
     <style>
         :root {
             --field-value-color: #adb5bd; /* رنگ پیش‌فرض برای مقادیر فیلدها */
-            --field-value-red: #dc3545; /* رنگ قرمز برای مقادیر خاص */
+            --field-value-red: #ff0000; /* قرمز معمولی */
         }
 
         body {
@@ -28,7 +28,7 @@
             background-color: #f8f9fa;
             color: #1e1e1e;
             --field-value-color: #6c757d; /* رنگ مقادیر فیلدها در تم روشن */
-            --field-value-red: #dc3545; /* رنگ قرمز در تم روشن */
+            --field-value-red: #ff0000; /* قرمز معمولی در تم روشن */
         }
         .card {
             background-color: #2d2d2d;
@@ -91,11 +91,17 @@
         }
         .field-value {
             color: var(--field-value-color); /* استفاده از متغیر CSS */
-            font-size: 14px;
+            font-size: 14px; /* اندازه فونت پیش‌فرض */
+            font-weight: 500; /* کمی پررنگ‌تر */
             transition: color 0.3s;
         }
         .field-value.red {
-            color: var(--field-value-red); /* استفاده از متغیر CSS برای رنگ قرمز */
+            color: var(--field-value-red); /* قرمز معمولی */
+            font-weight: bold; /* پررنگ */
+            font-size: 16px; /* اندازه فونت بزرگ‌تر */
+        }
+        .light-mode .field-value.red {
+            color: var(--field-value-red); /* قرمز معمولی در تم روشن */
         }
         .theme-toggle-btn {
             position: fixed;
@@ -567,4 +573,4 @@
         });
     </script>
 </body>
-</html>
+    </html>
